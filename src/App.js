@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import CircularProgress from "@mui/material/CircularProgress";
+import { Route, Router, Switch, Redirect } from "react-router-dom";
+import { Suspense } from "react";
+import routes from "./routes";
+import PrivateRoute from "./components/PrivateRoute";
+import history from "./history";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router history={history}>
+      <Suspense fallback={<CircularProgress />}>
+        <Switch>
+          {Object.entries(routes).map(([key, route]) => {
+            return route.private ? (
+              <PrivateRoute key={route.path} {...route} />
+            ) : (
+              <Route key={route.path} {...route} />
+            );
+          })}
+          <Redirect from="*" to="/" />
+        </Switch>
+      </Suspense>
+    </Router>
   );
 }
 
